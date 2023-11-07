@@ -1,22 +1,22 @@
 AWSTemplateFormatVersion: 2010-09-09
-
-
-
-
 Parameters:
   InstanceType:
     Description: The EC2 instance type
     Type: String
     Default: t3.micro
     AllowedValues:
-      - t2.micro
+      - t3.micro
+      - t3.small
+      - t3.medium
   KeyName:
     Description: Name of an existing EC2 key pair to allow SSH access to the instances
     Type: 'AWS::EC2::KeyPair::KeyName'
+  UserData:
+    Description: Base64 user data to execute on instances
+    Type: 'String'
   LatestAmiId:
     Description: AMI id
-    Type: 'string'
-  
+    Type: String
   OperatorEmail:
     Description: The email address to notify when there are any scaling activities
     Type: String
@@ -33,7 +33,6 @@ Parameters:
   VPC:
     Type: 'AWS::EC2::VPC::Id'
     Description: A virtual private cloud (VPC) that enables resources in public subnets to connect to the internet
-
 Resources:
   ELBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -42,8 +41,8 @@ Resources:
       VpcId: !Ref VPC
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
+        FromPort: 8080
+        ToPort: 8080
         CidrIp: 0.0.0.0/0
   EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -52,8 +51,8 @@ Resources:
       VpcId: !Ref VPC
       SecurityGroupIngress:
       - IpProtocol: tcp
-        FromPort: 80
-        ToPort: 80
+        FromPort: 8080
+        ToPort: 8080
         SourceSecurityGroupId:
           Fn::GetAtt:
           - ELBSecurityGroup
@@ -71,8 +70,8 @@ Resources:
       HealthyThresholdCount: 5
       Matcher:
         HttpCode: '200'
-      Name: EC2TargetGroup
-      Port: 80
+      Name: !Sub ${AWS::StackName}-EC2TargetGroup
+      Port: 8080
       Protocol: HTTP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
@@ -86,7 +85,7 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref EC2TargetGroup
       LoadBalancerArn: !Ref ApplicationLoadBalancer
-      Port: 80
+      Port: 8080
       Protocol: HTTP
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -105,14 +104,7 @@ Resources:
         KeyName: !Ref KeyName
         SecurityGroupIds: 
           - !Ref EC2SecurityGroup
-        UserData:
-          Fn::Base64: !Sub |
-            #!/bin/bash
-            yum update -y
-            yum install -y httpd
-            systemctl start httpd
-            systemctl enable httpd
-            echo "<h1>Hello World!</h1>" > /var/www/html/index.html
+        UserData: !Ref UserData
   NotificationTopic:
     Type: AWS::SNS::Topic
     Properties:
