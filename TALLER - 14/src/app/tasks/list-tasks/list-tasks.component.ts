@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { Task } from './../tasks.model';
 import { AppState } from './../../app.state';
+import * as TaskActions from './../../store/tasks.actions';
+
 
 @Component({
   selector: 'app-list-tasks',
@@ -19,8 +20,20 @@ export class ListTasksComponent implements OnInit {
 
   ngOnInit() {
     this.store.pipe(select('tasks')).subscribe((tasks: Task[]) => {
-      console.log(tasks)
       this.tasks = tasks;
     });
+  }
+
+  removeTask(id:number) {
+    this.store.dispatch(TaskActions.deleteTask({id}))
+  }
+
+  saveTask(id:number, name:string, state:string) {
+    const task : Task = {
+      name: name, 
+      state: state,
+      id: id,
+    } 
+    this.store.dispatch(TaskActions.addSavedTask({task}))
   }
 }

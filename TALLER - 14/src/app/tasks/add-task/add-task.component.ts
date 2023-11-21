@@ -12,6 +12,8 @@ import { Task } from '../tasks.model';
 })
 export class AddTaskComponent implements OnInit {
   
+  currentId: number = 1;
+
   constructor(
     private store: Store
   ) { }
@@ -21,7 +23,11 @@ export class AddTaskComponent implements OnInit {
 
   // Disparamos la acción
   addTask(name:string, state:string) {
-    const task : Task = {name: name, state: state} 
+    const task : Task = {
+      name: name, 
+      state: state,
+      id: this.currentId++,
+    } 
     this.store.dispatch(TaskActions.addTask({task}))
   }
 }

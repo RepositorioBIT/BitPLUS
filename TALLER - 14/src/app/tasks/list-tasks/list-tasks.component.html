@@ -1,5 +1,7 @@
 <ul>
   <li *ngFor="let task of tasks">
-    {{ task.name }} - {{ task.state }}
+    {{task.id}} - {{ task.name }} - {{ task.state }}
+    <button (click)="removeTask(task.id)">Eliminar</button>
+    <button (click)="saveTask(task.id, task.name, task.state)">Guardar</button>
   </li>
 </ul>

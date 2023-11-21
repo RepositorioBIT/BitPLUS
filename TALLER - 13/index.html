@@ -10,6 +10,7 @@
         Counter: <span id="value">0</span> times
         <button id="increment">+</button>
         <button id="decrement">-</button>
+        <button id="reset">reset</button>
         <button id="incrementIfOdd">Increment if odd</button>
         <button id="incrementAsync">Increment async</button>
       </p>
@@ -23,6 +24,8 @@
             return state + 1
           case 'DECREMENT':
             return state - 1
+          case 'RESET':
+            return 0
           default:
             return state
         }
@@ -42,6 +45,10 @@
 
       render()
       store.subscribe(render)
+
+      document.getElementById('reset').addEventListener('click', function () {
+        store.dispatch({ type: 'RESET' })
+      })
 
       document.getElementById('increment').addEventListener('click', function () {
         store.dispatch({ type: 'INCREMENT' })
