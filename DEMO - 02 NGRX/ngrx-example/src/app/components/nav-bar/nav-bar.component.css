@@ -1,0 +1,32 @@
+.inner_navbar_containter {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    height: 100%;
+
+    padding-right: 2rem;
+}
+
+.inner_navbar_containter a {
+    margin-right: 2rem;
+}
+
+.cart {
+    position: relative;
+}
+
+.list {
+    position: absolute;
+    height: 250px;
+    width: 300px;
+
+    right: 0;
+    display: none;
+
+    background-color: burlywood;  
+}
+
+.cart:hover .list {
+    display: block;
+}

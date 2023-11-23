@@ -1,0 +1,10 @@
+.cart_list_container {
+    padding: 1rem 2rem;
+}
+
+.cart_list_single_product {
+    padding: 1rem 2rem;
+    background-color: rgb(124, 119, 119);
+
+    color: white;
+}
